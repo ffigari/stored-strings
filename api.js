@@ -72,6 +72,9 @@ app.get('/informe', (req, res) => {
     </div>
   `))
 })
+app.get('/i/', (req, res) => {
+  return res.redirect('/')
+})
 app.get('/', (req, res) => {
   res.send(wrapBody(`
     <div class="my-3">
