@@ -7,7 +7,12 @@ const spawnServer = (existingProcess) => {
   if (existingProcess) {
     existingProcess.kill('SIGHUP')
   }
-  existingProcess = spawn('node', ['api.js'])
+  try {
+    existingProcess = spawn('node', ['api.js'])
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
   console.log(`[runner:${ts()}] new server spawned`)
   existingProcess.stdout.on('data', (data) => {
     data = data.toString().replace(/\n$/, "");
@@ -21,7 +26,12 @@ const spawnServer = (existingProcess) => {
   return existingProcess
 }
 
-let webAPIProcess
-chokidar.watch('./api.js').on('all', (event, path) => {
-  webAPIProcess = spawnServer(webAPIProcess)
-})
+
+if (process.argv[2] === "watch") {
+  let webAPIProcess
+  chokidar.watch('./api.js').on('all', (event, path) => {
+    webAPIProcess = spawnServer(webAPIProcess)
+  })
+} else {
+  spawnServer();
+}
