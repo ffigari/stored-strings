@@ -2,9 +2,10 @@
 set -euo pipefail
 
 lsof -ti:3000 && kill $(lsof -ti:3000)
-node index.js build
-nohup node index.js start &
+nohup node runner.js &
 
-cp devops/nginx-config /etc/nginx/sites-enabled/mi-rincon
+NGINX_CONFIG_PATH=/etc/nginx/sites-enabled/stored-strings
+rm -rf $NGINX_CONFIG_PATH
+cp devops/nginx-config $NGINX_CONFIG_PATH
 nginx -t
 nginx -s reload
