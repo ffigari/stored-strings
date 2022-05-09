@@ -90,6 +90,10 @@ app.get('/', (req, res) => {
 
       También armé <a href="/list">esta pavada</a> que lo único que hace es
       guardar strings hasta que reseteo el server.
+      <br>
+      Yo en verdad quiero buscar entender la programación como un alfarero
+      entiende la arcilla. Y dsp al margén de eso preocuparme únicamente por el
+      amor en sus diversas expresiones.
     </div>
   `))
 })
