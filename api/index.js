@@ -30,22 +30,34 @@ storedStrings.addItselfTo(content)
 content.get('/', (req, res) => {
   res.send(wrapBody(`
     <div class="my-3">
+      <p>
+        Qué tal? Mi nombre es Francisco Figari. Busco entender la programación
+        como un alfarero entiende la arcilla. A la par de tal exploración busco
+        retribuir a la sociedad que me permitió formarme. Quisiera ver una
+        Buenos Aires letrada en programación, tal que sus residentes puedan
+        verse adecuadamente empoderados. No es evidente qué significan estos
+        objetivos ni en qué dirección navegar para lograrlos.
+      </p>
+
+      <p>
+        Ahora estoy terminando mi tesis de licenciatura en Ciencias de la
+        Computación, UBA. Se trata de eye tracking web aplicado a la
+        neurociencia y <a
+        href="https://github.com/ffigari/rastreador-ocular">anda por acá</a> lo
+        que fui armando.  También armé <a href="/stored-strings/list">esta
+        pavada</a> que lo único que hace es guardar strings hasta que reseteo
+        el server.
+      </p>
+
+      <p>
+        En cualquier momento mi mood está muy probablemente sintetizado por la
+        siguiente imagen:
+      </p>
+
       <img
         src="/index.jpg"
         alt="yo solo quiero codear lptm"
       >
-
-      Ahora estoy terminando mi tesis de licenciatura en Ciencias de la
-      Computación UBA. Se trata de eye tracking web en el contexto neuro y <a
-      href="https://github.com/ffigari/rastreador-ocular">anda por acá</a> lo
-      que fui armando.
-
-      También armé <a href="/stored-strings/list">esta pavada</a> que lo único
-      que hace es guardar strings hasta que reseteo el server.
-      <br>
-      Yo en verdad quiero buscar entender la programación como un alfarero
-      entiende la arcilla. Y dsp al margén de eso preocuparme únicamente por el
-      amor en sus diversas expresiones.
     </div>
   `))
 })
