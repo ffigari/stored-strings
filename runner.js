@@ -8,7 +8,7 @@ const spawnServer = (existingProcess) => {
     existingProcess.kill('SIGHUP')
   }
   try {
-    existingProcess = spawn('node', ['api.js'])
+    existingProcess = spawn('node', ['api/index.js'])
   } catch (e) {
     console.error(e)
     throw e
@@ -29,7 +29,7 @@ const spawnServer = (existingProcess) => {
 
 if (process.argv[2] === "watch") {
   let webAPIProcess
-  chokidar.watch('./api.js').on('all', (event, path) => {
+  chokidar.watch('./api').on('all', (event, path) => {
     webAPIProcess = spawnServer(webAPIProcess)
   })
 } else {
