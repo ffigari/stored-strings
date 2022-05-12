@@ -1,4 +1,4 @@
-web personal, levantada en http://ffig.ar/i
+repo personal, interfaz web levantada en http://ffig.ar/i
 
 ```sh
 nvm use
