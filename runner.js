@@ -1,6 +1,8 @@
 const chokidar = require('chokidar')
 const { spawn } = require('child_process')
 
+const { putDBsUpToDate } = require('./src/dbMigrations.js');
+
 const ts = () => (new Date).toISOString();
 
 // ansi colors: https://stackoverflow.com/a/41407246/2923526
@@ -30,12 +32,28 @@ const spawnServer = (existingProcess) => {
   return existingProcess
 }
 
+const main = () => {
+  const action = process.argv[2];
+  if (!action) {
+    throw 'action was not indicated'
+  }
+  if (action === "watch") {
+    let webAPIProcess
+    chokidar.watch('./api').on('all', (event, path) => {
+      webAPIProcess = spawnServer(webAPIProcess)
+    })
+  } else if (action === "spawn") {
+    spawnServer();
+  } else if (action === "migrate") {
+    putDBsUpToDate();
+  } else {
+    throw `action ${action} was not recognized`;
+  }
+}
 
-if (process.argv[2] === "watch") {
-  let webAPIProcess
-  chokidar.watch('./api').on('all', (event, path) => {
-    webAPIProcess = spawnServer(webAPIProcess)
-  })
-} else {
-  spawnServer();
+try {
+  main();
+} catch (e) {
+  console.error(`${RED}[runner:${ts()}] ${e}${RESET}`);
+  process.exit(-1);
 }

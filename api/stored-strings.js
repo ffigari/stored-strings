@@ -1,18 +1,20 @@
 const express = require('express')
+const { Client } = require('pg')
 
 const { wrapBody } = require('./common/index.js')
 
 module.exports.storedStrings = {
-  addItselfTo: (router) => {
-    const path = '/stored-strings';
+  addItselfTo: async (router, connectionString) => {
+    const urlPath = '/stored-strings';
     const storedStringsRouter = express.Router()
 
+    // TODO: Replace usage of this list below with adequate calls to the db
     const l = [];
     storedStringsRouter.get('/informe', (req, res) => {
       res.send(wrapBody(`
         <div class="my-3">
           <p>
-            Con <a href="${path}/list">esta webapp</a> busco explorar la
+            Con <a href="${urlPath}/list">esta webapp</a> busco explorar la
             generación de recursos por parte de usuarios autenticados. Para
             esto cada usuario tendrá que poder crearse una cuenta, generar
             strings y luego verlos en algún lado.  Se explorará tangencialmente
@@ -44,8 +46,8 @@ module.exports.storedStrings = {
           <h3>generación autenticada de strings</h1>
           <p>
             Created strings are shown below. You can always
-            <a href="${path}/create">create</a> more. Tmb podés leer un
-            <a href="${path}/informe">informe del trabajo realizado</a>
+            <a href="${urlPath}/create">create</a> more. Tmb podés leer un
+            <a href="${urlPath}/informe">informe del trabajo realizado</a>
           </p>
           ${l.length === 0 ? `
             No string has yet been created.
@@ -63,7 +65,7 @@ module.exports.storedStrings = {
       res.send(wrapBody(`
         <form class="my-3" method="POST">
           Acá podes guardar strings. Si no podés volver a ver <a
-          href="${path}/list">las que están creadas</a>.
+          href="${urlPath}/list">las que están creadas</a>.
           <div class="mb-3">
             <label for="important-text" class="form-label">El texto</label>
             <input
@@ -86,6 +88,8 @@ module.exports.storedStrings = {
     storedStringsRouter.post('/create', (req, res) => {
       // TODO: Validar que no venga vacío el campo siguiente
       //       Qué se hace a nivel HTML?
+      //       Va a convenir hacer validación pero tmb de frontend con algún
+      //       framework reactivo
       if (!req.body['foo-string']) {
         return res.status(400).send();
       }
@@ -93,11 +97,11 @@ module.exports.storedStrings = {
       l.push(req.body['foo-string'])
       res.send(wrapBody(`
         <div class="my-3">
-          <p>your string was correctly created! <a href="${path}/list">check
-          them all</a> or <a href="${path}/create">create another one</a>.
+          <p>your string was correctly created! <a href="${urlPath}/list">check
+          them all</a> or <a href="${urlPath}/create">create another one</a>.
         </div>
       `))
     })
-    router.use(path, storedStringsRouter)
+    router.use(urlPath, storedStringsRouter)
   }
 }

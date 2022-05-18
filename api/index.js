@@ -4,14 +4,17 @@ const bodyParser = require('body-parser')
 const { wrapBody } = require('./common/index.js')
 const { storedStrings } = require('./stored-strings')
 
+// TODO: This import should not need to go back, 'src' should be added to PATH
+const { ensureDBState } = require('./../src/dbMigrations.js')
+
 const env = {
   get connectionString() {
     const cs = process.env.CONNECTION_STRING;
     if (!cs) {
       throw 'missing connection string for db'
     }
-    if(!cs.match(/^postgresql:\/\/[^:]+:[^@]+@[^:]+:[^\/]+\/$/)) {
-      throw 'db\'s connection string does not match the expected format `postgresql://<host>:<password>@<server>:<port>/`';
+    if(!cs.match(/^postgresql:\/\/[^:]+:[^@]+@[^:]+:[^\/]+$/)) {
+      throw 'db\'s connection string does not match the expected format `postgresql://<host>:<password>@<server>:<port>`';
     }
     return cs;
   }
@@ -42,7 +45,9 @@ const main = async () => {
   })
 
   const content = express.Router()
-  await storedStrings.addItselfTo(content, env.connectionString);
+  await ensureDBState(env.connectionString, 'stored_strings');
+  throw 'foo';
+  await storedStrings.addItselfTo(content);
   content.get('/', (req, res) => {
     res.send(wrapBody(`
       <div class="my-3">
