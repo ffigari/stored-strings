@@ -33,10 +33,10 @@ content.get('/', (req, res) => {
       <p>
         Qué tal? Mi nombre es Francisco Figari. Busco entender la programación
         como un alfarero entiende la arcilla. A la par de tal exploración busco
-        retribuir a la sociedad que me permitió formarme. Quisiera ver una
-        Buenos Aires letrada en programación, tal que sus residentes puedan
-        verse adecuadamente empoderados. No es evidente qué significan estos
-        objetivos ni en qué dirección navegar para lograrlos.
+        retribuir a la sociedad que me permitió formarme. En particular quiero
+        hacerlo acá en Buenos Aires tal que como sus residentes podamos estar
+        adecuadamente empoderados. Todavía no entiendo muy bien qué implica esto
+        o qué dirección navegar para lograrlo.
       </p>
 
       <p>
