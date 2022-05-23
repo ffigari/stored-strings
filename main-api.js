@@ -2,10 +2,9 @@ const express = require('express')
 const bodyParser = require('body-parser')
 
 const { wrapBody } = require('./common/index.js')
-const { storedStrings } = require('./stored-strings')
+const storedStringsAPI = require('./stored-strings/api.js')
 
-// TODO: This import should not need to go back, 'src' should be added to PATH
-const { ensureDBState } = require('./../src/dbMigrations.js')
+const { ensureDBState } = require('./src/db-migrations.js')
 
 const env = {
   get connectionString() {
@@ -44,11 +43,12 @@ const main = async () => {
     next()
   })
 
-  const content = express.Router()
-  await ensureDBState(env.connectionString, 'stored_strings');
-  throw 'foo';
-  await storedStrings.addItselfTo(content);
-  content.get('/', (req, res) => {
+  const mainRouter = express.Router()
+  // TODO: Existing DBs should be read from the dirs
+  // await ensureDBState(env.connectionString, 'stored_strings');
+  // TODO: Existing APIs should be read from the dirs
+  await storedStringsAPI.addItselfTo(mainRouter);
+  mainRouter.get('/', (req, res) => {
     res.send(wrapBody(`
       <div class="my-3">
         <p>
@@ -83,7 +83,7 @@ const main = async () => {
       </div>
     `))
   })
-  app.use('/i', content)
+  app.use('/i', mainRouter)
   app.listen(port, () => {
     console.log(`escuchando en puerto ${port}`);
   })

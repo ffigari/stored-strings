@@ -1,7 +1,7 @@
 const chokidar = require('chokidar')
 const { spawn } = require('child_process')
 
-const { putDBsUpToDate } = require('./src/dbMigrations.js');
+const { putDBsUpToDate } = require('./src/db-migrations.js');
 
 const ts = () => (new Date).toISOString();
 
@@ -14,7 +14,7 @@ const spawnServer = (existingProcess) => {
     existingProcess.kill('SIGHUP')
   }
   try {
-    existingProcess = spawn('node', ['api/index.js'])
+    existingProcess = spawn('node', ['main-api.js'])
   } catch (e) {
     console.error(e)
     throw e
@@ -39,12 +39,14 @@ const main = () => {
   }
   if (action === "watch") {
     let webAPIProcess
-    chokidar.watch('./api').on('all', (event, path) => {
+    // TODO: the dir 'stored-strings' should be found automatically
+    chokidar.watch(['./main-api.js', './stored-strings']).on('all', (event, path) => {
       webAPIProcess = spawnServer(webAPIProcess)
     })
   } else if (action === "spawn") {
     spawnServer();
   } else if (action === "migrate") {
+    // TODO: here the existing dbs should also be found automatically
     putDBsUpToDate();
   } else {
     throw `action ${action} was not recognized`;

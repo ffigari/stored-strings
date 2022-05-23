@@ -1,9 +1,8 @@
 const { Client } = require('pg')
 
+// TODO: This has to receive the connection string and the name of the db,
+//       instead of assuming here anything about the structure of the repository
 module.exports.putDBsUpToDate = () => {
-  // TODO: Retrieve app folders in root dir which also have a db.js file
-  //       Said file should contain the information about the name of the db and
-  //       the migrations
   throw `'putDBsUpToDate' not implemented`
 }
 
