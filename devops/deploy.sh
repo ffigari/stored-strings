@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+npm i
 lsof -ti:3000 && kill $(lsof -ti:3000)
 nohup node runner.js spawn &
 
