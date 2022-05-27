@@ -1,7 +1,8 @@
 const chokidar = require('chokidar')
 const { spawn } = require('child_process')
 
-const { putDBsUpToDate } = require('./src/db-migrations.js');
+const { putDBUpToDate } = require('./src/db-migrations.js');
+const { readDBs } = require('./common/index.js');
 
 const ts = () => (new Date).toISOString();
 
@@ -32,7 +33,7 @@ const spawnServer = (existingProcess) => {
   return existingProcess
 }
 
-const main = () => {
+const main = async () => {
   const action = process.argv[2];
   if (!action) {
     throw 'action was not indicated'
@@ -46,16 +47,13 @@ const main = () => {
   } else if (action === "spawn") {
     spawnServer();
   } else if (action === "migrate") {
-    // TODO: here the existing dbs should also be found automatically
-    putDBsUpToDate();
+    (await readDBs()).map(({ dbName }) => putDBUpToDate(dbName))
   } else {
     throw `action ${action} was not recognized`;
   }
 }
 
-try {
-  main();
-} catch (e) {
+main().then().catch(e => {
   console.error(`${RED}[runner:${ts()}] ${e}${RESET}`);
   process.exit(-1);
-}
+});

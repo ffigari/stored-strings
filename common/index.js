@@ -1,3 +1,5 @@
+const { readdir } = require('fs').promises
+
 module.exports.wrapBody = (body) => `
   <!DOCTYPE html>
   <html>
@@ -24,3 +26,17 @@ module.exports.wrapBody = (body) => `
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </body>
   </html>`;
+
+module.exports.readDBs = async () => {
+  const dirs = (await readdir('.', { withFileTypes: true })).filter((
+    f
+  ) => f.isDirectory() && ![
+    '.git', 'common', 'node_modules', 'devops', 'src', 'public'
+  ].includes(f.name)).map(f => f.name);
+  let dirsWithDB = [];
+  for (const d of dirs) {
+    if ((await readdir(`./${d}`)).includes('db.js'))
+      dirsWithDB.push(d)
+  }
+  return dirsWithDB.map(d => require(`../${d}/db.js`));
+}

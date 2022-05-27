@@ -46,7 +46,7 @@ const main = async () => {
 
   const mainRouter = express.Router()
   // TODO: Existing DBs should be read from the dirs
-  // await ensureDBState(env.connectionString, 'stored_strings');
+  await ensureDBState(env.connectionString, 'stored_strings');
   // TODO: Existing APIs should be read from the dirs
   await storedStringsAPI.addItselfTo(mainRouter);
   await recetarioAPI.addItselfTo(mainRouter);
