@@ -1,7 +1,7 @@
 const chokidar = require('chokidar')
 const { spawn } = require('child_process')
 
-const { putDBUpToDate } = require('./src/db-migrations.js');
+const { migrateDB } = require('./src/db-migrations.js');
 const { readDBs, env } = require('./common/index.js');
 
 const ts = () => (new Date).toISOString();
@@ -49,7 +49,7 @@ const main = async () => {
   } else if (action === "migrate") {
     await Promise.all((await readDBs()).map(({
       dbName
-    }) => putDBUpToDate(env.connectionString, dbName)));
+    }) => migrateDB(env.connectionString, dbName)));
   } else {
     throw `action ${action} was not recognized`;
   }
