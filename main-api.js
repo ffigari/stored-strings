@@ -1,24 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const { wrapBody } = require('./common/index.js')
+const { wrapBody, env } = require('./common/index.js')
 const storedStringsAPI = require('./stored-strings/api.js')
 const recetarioAPI = require('./recetario/api.js')
 
 const { ensureDBState } = require('./src/db-migrations.js')
-
-const env = {
-  get connectionString() {
-    const cs = process.env.CONNECTION_STRING;
-    if (!cs) {
-      throw 'missing connection string for db'
-    }
-    if(!cs.match(/^postgresql:\/\/[^:]+:[^@]+@[^:]+:[^\/]+$/)) {
-      throw 'db\'s connection string does not match the expected format `postgresql://<host>:<password>@<server>:<port>`';
-    }
-    return cs;
-  }
-}
 
 const main = async () => {
   const app = express()

@@ -1,15 +1,6 @@
 const { Client } = require('pg')
 
-// TODO: This has to receive the connection string and the name of the db,
-//       instead of assuming here anything about the structure of the repository
-module.exports.putDBUpToDate = (dbName) => {
-  console.log(`TODO: Create '${dbName}' db`)
-  console.log(`TODO: Create migration\'s table at '${dbName}'`)
-  console.log(`TODO: Run '${dbName}'\'s migrations`)
-  throw `'putDBUpToDate' not implemented`
-}
-
-module.exports.ensureDBState = async (connectionString, dbName) => {
+const getDefaultDB = async (connectionString) => {
   let client;
   try {
     client = new Client({
@@ -20,6 +11,19 @@ module.exports.ensureDBState = async (connectionString, dbName) => {
     console.error(e)
     throw 'could not connect to PostgreSQL server';
   }
+  return client;
+}
+// TODO: This has to receive the connection string and the name of the db,
+//       instead of assuming here anything about the structure of the repository
+module.exports.putDBUpToDate = async (connectionString, dbName) => {
+  const defaultDBClient = await getDefaultDB(connectionString);
+  console.log(`TODO: Create '${dbName}' db`)
+  console.log(`TODO: Create migration\'s table at '${dbName}'`)
+  console.log(`TODO: Run '${dbName}'\'s migrations`)
+  throw `'putDBUpToDate' not implemented`
+}
+
+module.exports.ensureDBState = async (connectionString, dbName) => {
   try {
     client = new Client({
       connectionString: `${connectionString}/${dbName}`,

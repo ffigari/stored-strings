@@ -40,3 +40,16 @@ module.exports.readDBs = async () => {
   }
   return dirsWithDB.map(d => require(`../${d}/db.js`));
 }
+
+module.exports.env = {
+  get connectionString() {
+    const cs = process.env.CONNECTION_STRING;
+    if (!cs) {
+      throw 'missing connection string for db'
+    }
+    if(!cs.match(/^postgresql:\/\/[^:]+:[^@]+@[^:]+:[^\/]+$/)) {
+      throw 'db\'s connection string does not match the expected format `postgresql://<host>:<password>@<server>:<port>`';
+    }
+    return cs;
+  }
+}
