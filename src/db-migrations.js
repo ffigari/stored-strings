@@ -34,16 +34,19 @@ module.exports.migrateDB = async (connectionString, dbName) => {
       throw e;
     }
   }
-  console.log(`TODO: Obtain last run migration`)
   let lastRunMigration;
   try {
-    console.log(await dbClient.query(`select * from ${MIGRATIONS_TABLE_NAME}`));
-    throw 'foo'
+    lastRunMigration = (await dbClient.query(`
+      select name
+      from migrations
+      order by application_order desc
+      limit 1
+    `)).rows[0].name
   } catch (e) {
     // TODO: Maybe this should be done along with the db creation
     if (e.code === '42P01') {  // If table does not exist
       await dbClient.query(`
-        create table ${MIGRATIONS_TABLE_NAME} (
+        create table migrations (
           name text not null check (name <> ''),
           applied_at timestamp default current_timestamp,
           application_order serial,
@@ -52,8 +55,7 @@ module.exports.migrateDB = async (connectionString, dbName) => {
       `)
       const dbCreationMigrationName = 'creation';
       await dbClient.query(`
-        insert into ${MIGRATIONS_TABLE_NAME}
-        values ('${dbCreationMigrationName}')
+        insert into migrations values ('${dbCreationMigrationName}')
       `)
       lastRunMigration = dbCreationMigrationName;
     } else {
