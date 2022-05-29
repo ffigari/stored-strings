@@ -47,6 +47,7 @@ const main = async () => {
   } else if (action === "spawn") {
     spawnServer();
   } else if (action === "migrate") {
+    // TODO: "migrate" action should handle both up and down migration
     await Promise.all((await readDBs()).map(({
       dbName
     }) => migrateDB(env.connectionString, dbName)));
