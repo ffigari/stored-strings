@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 
 const { wrapBody } = require('./common/index.js')
 const storedStringsAPI = require('./stored-strings/api.js')
+const recetarioAPI = require('./recetario/api.js')
 
 const { ensureDBState } = require('./src/db-migrations.js')
 
@@ -48,6 +49,7 @@ const main = async () => {
   // await ensureDBState(env.connectionString, 'stored_strings');
   // TODO: Existing APIs should be read from the dirs
   await storedStringsAPI.addItselfTo(mainRouter);
+  await recetarioAPI.addItselfTo(mainRouter);
   mainRouter.get('/', (req, res) => {
     res.send(wrapBody(`
       <div class="my-3">

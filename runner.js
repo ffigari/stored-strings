@@ -39,8 +39,8 @@ const main = () => {
   }
   if (action === "watch") {
     let webAPIProcess
-    // TODO: the dir 'stored-strings' should be found automatically
-    chokidar.watch(['./main-api.js', './stored-strings']).on('all', (event, path) => {
+    // TODO: Review why this spawn lots of servers on startup
+    chokidar.watch('.').on('all', (event, path) => {
       webAPIProcess = spawnServer(webAPIProcess)
     })
   } else if (action === "spawn") {

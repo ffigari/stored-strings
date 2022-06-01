@@ -2,13 +2,13 @@ const express = require('express')
 
 const { wrapBody } = require('./../common/index.js')
 
-module.exports.addItselfTo = async (router, connectionString) => {
+module.exports.addItselfTo = async (parentRouter, connectionString) => {
   const urlPath = '/stored-strings';
-  const storedStringsRouter = express.Router()
+  const appRouter = express.Router()
 
   // TODO: Replace usage of this list below with adequate calls to the db
   const l = [];
-  storedStringsRouter.get('/informe', (req, res) => {
+  appRouter.get('/informe', (req, res) => {
     res.send(wrapBody(`
         <div class="my-3">
           <p>
@@ -37,11 +37,11 @@ module.exports.addItselfTo = async (router, connectionString) => {
         </div>
       `))
   })
-  storedStringsRouter.get('/list', (req, res) => {
+  appRouter.get('/list', (req, res) => {
     // TODO: Retrieve strings from db
     res.send(wrapBody(`
         <div class="my-3">
-          <h3>generación autenticada de strings</h1>
+          <h1>generación autenticada de strings</h1>
           <p>
             Created strings are shown below. You can always
             <a href="${urlPath}/create">create</a> more. Tmb podés leer un
@@ -59,7 +59,7 @@ module.exports.addItselfTo = async (router, connectionString) => {
         </div>
       `));
   })
-  storedStringsRouter.get('/create', (req, res) => {
+  appRouter.get('/create', (req, res) => {
     res.send(wrapBody(`
         <form class="my-3" method="POST">
           Acá podes guardar strings. Si no podés volver a ver <a
@@ -83,7 +83,7 @@ module.exports.addItselfTo = async (router, connectionString) => {
       `));
   })
 
-  storedStringsRouter.post('/create', (req, res) => {
+  appRouter.post('/create', (req, res) => {
     // TODO: Validar que no venga vacío el campo siguiente
     //       Qué se hace a nivel HTML?
     //       Va a convenir hacer validación pero tmb de frontend con algún
@@ -100,5 +100,5 @@ module.exports.addItselfTo = async (router, connectionString) => {
         </div>
       `))
   })
-  router.use(urlPath, storedStringsRouter)
+  parentRouter.use(urlPath, appRouter)
 }
