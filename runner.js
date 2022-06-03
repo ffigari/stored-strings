@@ -48,15 +48,22 @@ const main = async () => {
     spawnServer();
   } else if (action === "migrate") {
     // TODO: "migrate" action should handle both up and down migration
+    //       Parse direction and count from action, eg "migrate:up:all" or
+    //       "migrate:down:1"
     await Promise.all((await readDBs()).map(({
-      dbName
-    }) => migrateDB(env.connectionString, dbName)));
+      dbName, migrations
+    }) => migrateDB(env.connectionString, dbName, migrations, {
+      direction: 'up',
+      count: 'all',
+    })));
   } else {
     throw `action ${action} was not recognized`;
   }
 }
 
 main().then().catch(e => {
-  console.error(`${RED}[runner:${ts()}] ${e}${RESET}`);
+  // TODO: This is not showing the error's line / trace
+  //       https://stackoverflow.com/a/635852/2923526
+  console.error(`${RED}[runner:${ts()}] ${e.stack || e}${RESET}`);
   process.exit(-1);
 });

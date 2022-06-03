@@ -18,7 +18,23 @@ const getDBClient = async (connectionString, dbName) => {
   return client;
 }
 
-module.exports.migrateDB = async (connectionString, dbName) => {
+module.exports.migrateDB = async (
+  connectionString, dbName, migrations, { direction, count }
+) => {
+  if (!['up', 'down'].includes(direction)) {
+    throw new Error('incorrect direction');
+  }
+  if (count !== 'all' && isNaN(parseInt(count))) {
+    throw new Error('invalid count');
+  }
+  if (direction === 'down') {
+    throw new Error('down direction not implemented');
+  }
+  if (count !== 'all') {
+    throw new Error('number count not implemented');
+  }
+
+  // TODO: Clients should be ended / released
   let dbClient;
   try {
     dbClient = await getDBClient(connectionString, dbName);
@@ -50,6 +66,25 @@ module.exports.migrateDB = async (connectionString, dbName) => {
       limit 1
     `)).rows[0].name;
 
+  let lastMigrationIdx;
+  if (lastRunMigration === 'creation') {
+    lastMigrationIdx = 0;
+  } else {
+    throw new Error('not implemented');
+  }
+
+  const migrationsToRun = migrations.slice(lastRunMigration)
+  for (const m of migrationsToRun) {
+    try {
+      await dbClient.query('begin');
+      await m.up(dbClient);
+      // TODO: Store name of migration in "migrations" table
+      await dbClient.query('commit');
+    } catch (e) {
+      await dbClient.query('rollback');
+      throw e;
+    }
+  }
   // TODO: Migrate up or down
   //   - run each m inside a tx
   //   - before running them, verify run migrations are consistent with input
@@ -57,7 +92,7 @@ module.exports.migrateDB = async (connectionString, dbName) => {
   //
   // How do I ensure migrations are reversible? A pre-commit hook which goes up
   // and down with a development db?
-  throw `'migrateDB' not implemented`
+  throw new Error(`'migrateDB' not implemented`);
 }
 
 module.exports.ensureDBState = async (connectionString, dbName) => {
