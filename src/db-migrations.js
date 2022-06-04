@@ -44,6 +44,7 @@ module.exports.migrateDB = async (
       const defaultDBClient = await getDefaultDBClient(connectionString);
 
       await defaultDBClient.query(`create database ${dbName}`);
+      await defaultDBClient.end();
       dbClient = await getDBClient(connectionString, dbName);
 
       await dbClient.query(`
@@ -60,11 +61,11 @@ module.exports.migrateDB = async (
     }
   }
   const lastRunMigration = (await dbClient.query(`
-      select name
-      from migrations
-      order by application_order desc
-      limit 1
-    `)).rows[0].name;
+    select name
+    from migrations
+    order by application_order desc
+    limit 1
+  `)).rows[0].name;
 
   let lastMigrationIdx;
   if (lastRunMigration === 'creation') {
@@ -78,13 +79,16 @@ module.exports.migrateDB = async (
     try {
       await dbClient.query('begin');
       await m.up(dbClient);
-      // TODO: Store name of migration in "migrations" table
+      await dbClient.query(`
+        insert into migrations (name) values ('${m.name}')
+      `);
       await dbClient.query('commit');
     } catch (e) {
       await dbClient.query('rollback');
       throw e;
     }
   }
+  await dbClient.end()
   // TODO: Migrate up or down
   //   - run each m inside a tx
   //   - before running them, verify run migrations are consistent with input
@@ -92,7 +96,6 @@ module.exports.migrateDB = async (
   //
   // How do I ensure migrations are reversible? A pre-commit hook which goes up
   // and down with a development db?
-  throw new Error(`'migrateDB' not implemented`);
 }
 
 module.exports.ensureDBState = async (connectionString, dbName) => {

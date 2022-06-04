@@ -62,8 +62,8 @@ const main = async () => {
 }
 
 main().then().catch(e => {
-  // TODO: This is not showing the error's line / trace
-  //       https://stackoverflow.com/a/635852/2923526
+  // 'e.stack' seems to be supported by default
+  // https://stackoverflow.com/a/635852/2923526
   console.error(`${RED}[runner:${ts()}] ${e.stack || e}${RESET}`);
   process.exit(-1);
 });

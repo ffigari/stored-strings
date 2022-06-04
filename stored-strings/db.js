@@ -3,9 +3,14 @@ module.exports.dbName = 'stored_strings';
 module.exports.migrations = [{
   name: 'strings_table',
   up: async (client) => {
-    console.log('TODO: Implement UP migration')
+    await client.query(`
+      create table strings (
+        id    serial primary key,
+        value text
+      )
+    `);
   },
   down: async (client) => {
-    // TODO: Implement down migration
+    throw new Error('TODO: down migration');
   },
 }];
