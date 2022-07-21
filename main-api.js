@@ -54,24 +54,31 @@ const main = async () => {
     res.send(wrapBody(`
       <div class="my-3">
         <p>
-          Qué tal? Mi nombre es Francisco Figari. Quiero ser alfarero de la
-          programación. A la par de tal exploración quiero tmb retribuir a la
-          sociedad que me permitió formarme. En particular quiero hacerlo acá
-          en Buenos Aires tal que como sus residentes podamos estar
-          adecuadamente empoderados. Todavía no entiendo muy bien qué implica
-          esto o qué dirección navegar para lograrlo.
-          <br>
-          na mentira qué se yo qué quiero
+          Qué tal? Mi nombre es Francisco Figari.
+          Quisiera poder entender la programación como un alfarero entiende la
+          arcilla y a la par de esa exloración retribuir a la sociedad que me
+          formó.
         </p>
 
         <p>
-          Ahora estoy terminando mi tesis de licenciatura en Ciencias de la
-          Computación, UBA. Se trata de eye tracking web aplicado a la
-          neurociencia y <a
-          href="https://github.com/ffigari/rastreador-ocular">anda por acá</a>
-          lo que fui armando.  También armé <a href="/stored-strings/list">esta
-          pavada</a> que lo único que hace es guardar strings hasta que reseteo
-          el server.
+          Busco dedicarme a entender el
+          potencial de la programación en conectarnos con
+          nuestra cotidianeidad.
+        </p>
+
+        <p>
+          Ando un poco perdido respecto de cómo hacerlo.
+        </p>
+
+        <p>
+          Ahora para fin de año tendría que estar recibido de computador
+          científico de la UBA.
+          Ando terminando mi tesis en la cual estudio la aplicabilidad de
+          eye tracking web en análisis clínicos remotos por navegador.
+          En <a href="https://github.com/ffigari/rastreador-ocular">este
+          repo</a> anda lo que tengo armado hasta ahora.
+          También armé <a href="/stored-strings/list">esta pavada</a> que lo
+          único que hace es guardar strings hasta que reseteo el server.
         </p>
 
         <p>
