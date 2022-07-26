@@ -61,8 +61,8 @@ const main = async () => {
         </p>
 
         <p>
-          Busco dedicarme a entender el
-          potencial de la programación en conectarnos con
+          Busco dedicarme a entender el potencial de la programación en ser
+          aplicada a distintas disciplinas y por qué no en cómo conectarnos con
           nuestra cotidianeidad.
         </p>
 
