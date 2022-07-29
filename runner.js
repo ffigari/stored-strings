@@ -3,6 +3,8 @@ const { spawn } = require('child_process')
 
 const { putDBsUpToDate } = require('./src/db-migrations.js');
 
+const { printCV } = require('./cv/index.js');
+
 const ts = () => (new Date).toISOString();
 
 // ansi colors: https://stackoverflow.com/a/41407246/2923526
@@ -37,7 +39,10 @@ const main = () => {
   if (!action) {
     throw 'action was not indicated'
   }
-  if (action === "watch") {
+  // TODO: Este archivo no debería ser exclusivo a la main api
+  if (action === "print-cv") {
+    printCV();
+  } else if (action === "watch") {
     let webAPIProcess
     // TODO: Review why this spawn lots of servers on startup
     chokidar.watch('.').on('all', (event, path) => {
