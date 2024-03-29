@@ -1,0 +1,143 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{datetime}
+\usepackage{hyperref}
+
+% https://tex.stackexchange.com/a/212264/273585
+\newdateformat{monthyeardate}{\monthname[\THEMONTH] de \THEYEAR}
+
+\begin{document}
+
+\thispagestyle{empty}  % prevent page number on first page
+                        % https://latex.org/forum/viewtopic.php?t=25462
+
+Francisco Figari - computador científico radicado en Buenos Aires
+
+\textit{Curriculum Vitae} - \monthyeardate\today
+
+\url{http://ffig.ar/i}
+
+\begin{itemize}
+
+  \item Experiencia
+  \begin{itemize}
+    \item
+      Desarrollador backend @ \textit{Brubank} desde mayo 2023. \newline
+      Extensión y construcción de sistemas backend orientados a comunicar
+      servicios internos, servicios externos e interfaces \textit{graphql}.
+
+    \item
+      Pasante de investigación @ \textit{DC, FCEyN, UBA} entre agosto 2021 y
+      septiembre 2022 bajo programa de becas para pasantías de iniciación en
+      la investigación. \newline
+      Estudio sobre el uso eye tracking en navegadores web aplicado a análisis
+      clínicos a distancia, realizado en torno a tesis de licenciatura.
+
+    \item
+      Programador fullstack @ \textit{DubbingDigital} entre marzo 2021 y
+      diciembre 2021.  \newline
+      Extensión y mantenimiento de interfaz y servidor web de software de
+      gestión.
+
+    \item
+      Programador lead @ \textit{UrbanSim} entre julio 2018 y noviembre 2020.
+      \newline
+      Inicialmente extensión de generador procedural de vivienda asequible
+      multifamiliar luego desarrollo de plataforma web envolvente.
+
+    \item
+      Pasante de investigación @ \textit{ARSLab, Carleton University} entre
+      febrero y junio de 2018. \newline
+      Estudio sobre la aplicabilidad de simulación al desarrollo de
+      \textit{firmware} de sistemas embebidos.
+
+    \item
+      Ayudante de cátedra en la materia Métodos Numéricos @ \textit{DC, FCEyN,
+      UBA}.  \newline
+      4 cuatrimestres ejercidos entre 2016 y 2018 distribuidos entre la
+      práctica y el laboratorio.
+
+    \item
+      Programador \textit{freelance} @ \textit{LIAA, FCEyN, UBA} en fin de 2017.
+      \newline
+      Exploración del uso de \textit{eye tracking} al estudio de atención en
+      navegadores web.
+
+    \item
+      Programador \textit{junior} @ \textit{Eryx} durante 4 meses a principios
+      de 2016.
+
+    \item
+      Ayudante de cocina y mozo @ \textit{La Capelina, San Fernando} durante
+      veranos 2012 y 2013.
+
+  \end{itemize}
+
+  \item \textit{Skills} laborales
+  \begin{itemize}
+
+    \item
+      Experiencia profesional con múltiples lenguajes (\texttt{Golang},
+      \texttt{Javascript}, \texttt{C}\verb|++|, \texttt{Python}) y paradigmas
+      (objetos, eventos, procedural). \newline
+      Buscando aprender nuevos estilos y aplicaciones de la programación.
+
+    \item
+      Adopción de prácticas \textit{agile} y metodologías \textit{kanban}.
+      Uso de \textit{Jira}. \newline
+      Experiencia trabajando en equipos interdisciplinarios conformados por
+      desarrolladores \textit{backend}, \textit{mobile} y \textit{frontend},
+      managers, \textit{qa}, \textit{data scientists}, urbanistas e
+      investigadores, lideando con proveedores y liderando pequeños equipos de
+      desarrollo (entre 2 y 3 desarrolladores).
+
+    \item
+      Habilidad para construir interfaces web y \textit{web api}s
+      (\texttt{Bootstrap}, \newline \texttt{ExpressJS}, \texttt{Flask}).
+      \newline
+      Comprensión intermedia de la API \texttt{JavaScript} para interactuar con
+      el navegador. \newline
+      Experiencia con librerías y \textit{frameworks} reactivos de
+      \textit{frontend} (\texttt{ReactJS}, \texttt{VueJS},
+      \texttt{Redux}).\newline
+      Conocimientos elementales sobre cómo levantar, mantener y migrar bases de
+      datos relacionales (\texttt{PostgreSQL}).
+
+    \item
+      Experiencia trabajando con distintos códigos de planeamiento urbano y
+      distintos sistemas de coordenadas.
+      Manipulación de objetos geoespaciales: dibujado en \textit{frontend}
+      (\texttt{MapBox}, \texttt{TurfJS}); almacenamiento (\texttt{PostGIS});
+      manipulación en algoritmos. \newline
+      Uso de APIs de geocodificación (\texttt{GoogleMaps Geocoding API}).
+
+    \item
+      Interés en aplicar y estudiar buenas prácticas de programación y
+      desarrollo de software. \newline
+      Conocimiento general de sistemas \texttt{Unix} (\texttt{git},
+      \texttt{ssh}, \texttt{bash}).
+      Conocimiento básico de \textit{DevOps} (\texttt{webpack},
+      \texttt{kubernetes}, \texttt{gcp}).
+
+    \item
+      Inglés (uso diario a través de estudio y ocio) y Francés (escolaridad).
+
+  \end{itemize}
+
+  \item Estudios
+  \begin{itemize}
+
+    \item
+      Licenciatura en Ciencias de la Computación @ \textit{DC, FCEyN, UBA},
+      iniciada en 2013 y finalizada en 2022.
+
+    \item
+      Secundario @ \textit{Licée Jean Mermoz, Buenos Aires}, finalizado en
+      2013.
+
+  \end{itemize}
+
+\end{itemize}
+
+\end{document}
