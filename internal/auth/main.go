@@ -7,19 +7,31 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+
+	clockP "github.com/ffigari/stored-strings/internal/clock"
+	"github.com/ffigari/stored-strings/internal/config"
 )
 
-type clock interface {
+type clockI interface {
 	Now() time.Time
 }
 
 type Authenticator struct {
 	hmacSampleSecret []byte
-	clock            clock
+	clock            clockI
 }
 
-func New(secret []byte, clock clock) Authenticator {
-	return Authenticator{
+func NewFromConfig() (*Authenticator, error) {
+	config, err := config.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	return New([]byte(config.JWTSecret), clockP.New()), nil
+}
+
+func New(secret []byte, clock clockI) *Authenticator {
+	return &Authenticator{
 		hmacSampleSecret: secret,
 		clock:            clock,
 	}

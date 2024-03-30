@@ -3,15 +3,15 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"os/exec"
 	"strings"
+
+	"github.com/ffigari/stored-strings/internal/oos"
 )
 
 type config struct {
-	GoogleAppPassword string `json:"google_app_password"`
-	JWTSecret         string `json:"jwt_secret"`
-	WebPassword       string `json:"web_password"`
+	GoogleAppPassword              string `json:"google_app_password"`
+	JWTSecret                      string `json:"jwt_secret"`
+	WebPassword                    string `json:"web_password"`
 	PostgresServerConnectionString string `json:"postgres_server_connection_string"`
 }
 
@@ -48,22 +48,7 @@ func Get() (*config, error) {
 		return c, nil
 	}
 
-	// to allow using this pkg in non-root directories (eg tests for the
-	// postgres server connection string)
-	rootAbsolutePath, err := exec.
-		Command("git", "rev-parse", "--show-toplevel").
-		Output()
-	if err != nil {
-		return nil, err
-	}
-
-	bytes, err := os.ReadFile(fmt.Sprintf(
-		"%s/config.json",
-		strings.TrimSpace(string(rootAbsolutePath)),
-	))
-	if err != nil {
-		return nil, fmt.Errorf("reading config: %w", err)
-	}
+	bytes, err := oos.ReadFileAtRoot("config.json")
 
 	c = &config{}
 
