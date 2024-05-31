@@ -10,7 +10,6 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/ffigari/stored-strings/internal/auth"
 	"github.com/ffigari/stored-strings/internal/parse"
 )
 
@@ -43,8 +42,12 @@ func (x *handle) Authed() *handle {
 	return x
 }
 
+type authenticatorI interface {
+	IsValidToken(string) bool
+}
+
 func (x *handle) Finish(
-	authenticator *auth.Authenticator,
+	authenticator authenticatorI,
 	dbPool *pgxpool.Pool,
 	cb func(
 		ctx context.Context,
