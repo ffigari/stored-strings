@@ -40,8 +40,7 @@ func NewMux(
 			return nil, err
 		} else {
 			r.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprint(w, ui.HTMLHeader(string(homePageBytes)))
+				ui.HTMLHeader(w, string(homePageBytes))
 			})
 		}
 	}
@@ -57,6 +56,23 @@ func NewMux(
 	} {
 		rr.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
+		})
+	}
+
+	for _, p := range []string{
+		"/retrocompatible",
+		"/retrocompatibilidad",
+	} {
+		r.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+			ui.HTMLHeader(w, ui.Paragraphs([]string{`
+				Que lo nuevo siempre pueda existir.
+			`, `
+				Que lo viejo fluya a la par de lo nuevo.
+			`, `
+				Que lo eterno se haga presente.
+			`, `
+				Que el presente se haga eterno.
+			`}))
 		})
 	}
 

@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -30,10 +31,25 @@ func Form(submitText string, inputs []string) string {
 	`, strings.Join(inputs, ""), submitText)
 }
 
-// TODO: esta funcion deberia recibir el response y además setearle el header de
-// content type
-func HTMLHeader(baseHTML string) string {
-	return fmt.Sprintf(`
+func mapS(xs []string, fn func(string) string) []string {
+	ys := []string{}
+
+	for _, x := range xs {
+		ys = append(ys, fn(x))
+	}
+
+	return ys
+}
+
+func Paragraphs(ps []string) string {
+	return strings.Join(mapS(ps, func(s string) string {
+		return fmt.Sprintf(`<p>%s</p>`, s)
+	}), "")
+}
+
+func HTMLHeader(w http.ResponseWriter, baseHTML string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprint(w, fmt.Sprintf(`
 		<!DOCTYPE html>
 		<html>
 			<head>
@@ -50,5 +66,5 @@ func HTMLHeader(baseHTML string) string {
 				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 			</body>
 		</html>
-	`, baseHTML)
+	`, baseHTML))
 }

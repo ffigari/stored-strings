@@ -75,15 +75,6 @@ func (s *Suite) SetupSuite() {
 	s.Require().NoError(err)
 	defer conn.Release()
 
-	_, err = conn.Exec(ctx, `
-		INSERT INTO calendar (date, event)
-		VALUES
-			('8 de marzo', 'comer rico'),
-			('25 de mayo', 'tomar mate')
-		;
-	`)
-	s.Require().NoError(err)
-
 	m, err := personalwebsite.NewMux(
 		context.Background(), testDBName, s.authenticator, s.password,
 	)

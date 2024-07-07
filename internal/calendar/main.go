@@ -15,31 +15,14 @@ import (
 	"github.com/ffigari/stored-strings/internal/webapi"
 )
 
-func ForEach_old(
-	ctx context.Context, conn *pgxpool.Conn, cb func(date, event string),
-) error {
-	rows, err := conn.Query(ctx, `SELECT date, event FROM calendar;`)
-	if err != nil {
-		return err
-	}
-
-	for rows.Next() {
-		var date, event string
-
-		if err := rows.Scan(&date, &event); err != nil {
-			return err
-		}
-
-		cb(date, event)
-	}
-
-	return nil
-}
-
 func ForEach(
 	ctx context.Context, conn *pgxpool.Conn, cb func(time.Time, string),
 ) error {
-	rows, err := conn.Query(ctx, `SELECT starts_at, description FROM events;`)
+	rows, err := conn.Query(ctx, `
+		SELECT starts_at, description
+		FROM events
+		ORDER BY starts_at
+	;`)
 	if err != nil {
 		return err
 	}
@@ -87,17 +70,6 @@ func AttachTo(
 				params map[string]string,
 			) {
 				baseHTML := `<ul class="list-group">`
-				if err := ForEach_old(ctx, conn, func(date, event string) {
-					baseHTML += fmt.Sprintf(
-						`<li class="list-group-item">%s: %s</li>`,
-						date,
-						event,
-					)
-				}); err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("[webapi] failed iterating old: %s", err.Error())
-					return
-				}
 				if err := ForEach(ctx, conn, func(
 					startsAt time.Time, description string,
 				) {
@@ -119,9 +91,7 @@ func AttachTo(
 				}
 				baseHTML += "</ul>"
 
-				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				wrappedHTML := ui.HTMLHeader(baseHTML)
-				fmt.Fprint(w, wrappedHTML)
+				ui.HTMLHeader(w, baseHTML)
 			}),
 	})
 
@@ -137,7 +107,7 @@ func AttachTo(
 				conn *pgxpool.Conn,
 				params map[string]string,
 			) {
-				fmt.Fprint(w, ui.HTMLHeader(ui.Form("Create", []string{
+				ui.HTMLHeader(w, ui.Form("Create", []string{
 					ui.LabeledInput("Fecha", `
 						<input
 							id="date-input"
@@ -154,7 +124,7 @@ func AttachTo(
 							name="description"
 						/>
 					`),
-				})))
+				}))
 			}),
 		"POST": webapi.NewHandle().
 			Authed().

@@ -2,11 +2,10 @@
 
 START TRANSACTION;
 
-INSERT INTO calendar (date, event)
+INSERT INTO events (starts_at, description)
 VALUES
-    ('10 y 11 de julio', 'finde en la costa'),
-    ('13 de julio 9:00', 'dentista'),
-    ('18 de julio', 'cumple Mengano'),
-    ('24 de julio', 'cumple Fulano');
+    ('2024-12-07 12:00:00', 'finde formación'),
+    ('2024-07-21 15:00:00', 'cumple Aurora')
+;
 
 COMMIT;

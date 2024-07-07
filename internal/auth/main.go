@@ -89,7 +89,7 @@ func AttachTo(
 		http.ResponseWriter, *http.Request,
 	) {
 		"GET": func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, ui.HTMLHeader(ui.Form("Login", []string{
+			ui.HTMLHeader(w, ui.Form("Login", []string{
 				ui.LabeledInput("Username", `
 					<input
 						id="username-input"
@@ -108,7 +108,7 @@ func AttachTo(
 						required
 					/>
 				`),
-			})))
+			}))
 		},
 		"POST": webapi.NewHandle().
 			WithParams([]string{"username", "password"}).
@@ -139,8 +139,9 @@ func AttachTo(
 					"Set-Cookie",
 					fmt.Sprintf("authorization=%s; Secure; HttpOnly", token),
 				)
-				fmt.Fprintf(w, ui.HTMLHeader("logged in"))
-				log.Println("[webapi] successful login")
+
+				ui.HTMLHeader(w, "logged in")
+
 				return
 			}),
 	})

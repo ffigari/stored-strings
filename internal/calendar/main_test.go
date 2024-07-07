@@ -19,7 +19,71 @@ import (
 	"github.com/ffigari/stored-strings/internal/calendar"
 )
 
+func (s *CalendarSuite) TestForEach() {
+	ctx := context.Background()
+
+	conn, err := s.dbPool.Acquire(ctx)
+	s.Require().NoError(err)
+	defer conn.Release()
+
+	_, err = conn.Exec(ctx, `DELETE FROM events`)
+	s.Require().NoError(err)
+
+	_, err = conn.Exec(ctx, `
+		INSERT INTO events (starts_at, description)
+		VALUES
+			('2024-06-21 18:50:00', 'merendar'),
+			('2024-06-21 12:30:00', '108 saludos al sol'),
+			('2024-08-26 09:30:00', 'pasear en bici'),
+			('2024-06-26 22:30:00', 'ver pelis')
+		;
+	`)
+	s.Require().NoError(err)
+
+	s.Run("events are sorted by start time", func () {
+		ctx := context.Background()
+
+		conn, err := s.dbPool.Acquire(ctx)
+		s.Require().NoError(err)
+		defer conn.Release()
+
+		sortedDescriptions := []string{
+			"108 saludos al sol", "merendar", "ver pelis", "pasear en bici",
+		}
+		i := 0
+		s.Require().NoError(calendar.ForEach(ctx, conn, func(
+			_ time.Time, description string,
+		) {
+			s.Require().True(i <= 3)
+			s.Require().Equal(sortedDescriptions[i], description)
+			i++
+		}))
+
+		s.Require().Equal(4, i)
+	})
+}
+
 func (s *CalendarSuite) TestAttachTo() {
+	ctx := context.Background()
+
+	conn, err := s.dbPool.Acquire(ctx)
+	s.Require().NoError(err)
+	defer conn.Release()
+
+	_, err = conn.Exec(ctx, `DELETE FROM events`)
+	s.Require().NoError(err)
+
+	_, err = conn.Exec(ctx, `
+		INSERT INTO events (starts_at, description)
+		VALUES
+			('2024-06-21 18:50:00', 'merendar'),
+			('2024-06-21 12:30:00', '108 saludos al sol'),
+			('2024-08-26 09:30:00', 'pasear en bici'),
+			('2024-06-26 22:30:00', 'ver pelis')
+		;
+	`)
+	s.Require().NoError(err)
+
 	doLoggedInRequest := func(method, path string, body io.Reader) *http.Response {
 		req, err := http.NewRequest(method, s.server.URL+path, body)
 		s.Require().NoError(err)
@@ -35,13 +99,11 @@ func (s *CalendarSuite) TestAttachTo() {
 		return res
 	}
 
-	s.Run("calendar can be retrieved from old and new table", func() {
+	s.Run("calendar can be retrieved", func() {
 		res := doLoggedInRequest("GET", "/calendar", nil)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
 		body := s.GetBody(res)
-		s.Require().Contains(body, "8 de marzo: comer rico")
-		s.Require().Contains(body, "25 de mayo: tomar mate")
 		s.Require().Contains(body, "2024-06-21 09:30: 108 saludos al sol")
 		s.Require().Contains(body, "2024-06-26 19:30: ver pelis")
 	})
@@ -66,9 +128,6 @@ func (s *CalendarSuite) TestAttachTo() {
 		defer conn.Release()
 
 		found := false
-		calendar.ForEach_old(ctx, conn, func(date, event string) {
-			found = found || event == newDescription
-		})
 		calendar.ForEach(ctx, conn, func(_ time.Time, description string) {
 			found = found || description == newDescription
 		})
@@ -85,8 +144,6 @@ func (s *CalendarSuite) TestAttachTo() {
 		)
 
 		body := s.GetBody(res)
-		s.Require().Contains(body, "8 de marzo: comer rico")
-		s.Require().Contains(body, "25 de mayo: tomar mate")
 		s.Require().Contains(body, "2024-06-21 09:30: 108 saludos al sol")
 		s.Require().Contains(body, "2024-06-26 19:30: ver pelis")
 		s.Require().Contains(body, "2024-07-23 19:15: pasarla lindo")
@@ -116,28 +173,6 @@ func (s *CalendarSuite) SetupSuite() {
 	s.authenticator = s.SetupAuthenticator()
 
 	s.dbPool = s.SetupDB(ctx, testDBName)
-
-	conn, err := s.dbPool.Acquire(ctx)
-	s.Require().NoError(err)
-	defer conn.Release()
-
-	_, err = conn.Exec(ctx, `
-		INSERT INTO calendar (date, event)
-		VALUES
-			('8 de marzo', 'comer rico'),
-			('25 de mayo', 'tomar mate')
-		;
-	`)
-	s.Require().NoError(err)
-
-	_, err = conn.Exec(ctx, `
-		INSERT INTO events (starts_at, description)
-		VALUES
-			('2024-06-21 12:30:00', '108 saludos al sol'),
-			('2024-06-26 22:30:00', 'ver pelis')
-		;
-	`)
-	s.Require().NoError(err)
 
 	r := mux.NewRouter()
 
