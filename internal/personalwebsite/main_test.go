@@ -57,7 +57,10 @@ func (s *Suite) TestHome() {
 	})
 }
 
-func (s *Suite) TestLogin() {
+func (s *Suite) TestCalendarIsServed() {
+	res, err := http.Get(s.server.URL+"/i/calendar")
+	s.Require().NoError(err)
+	s.Require().Equal(http.StatusUnauthorized, res.StatusCode)
 }
 
 func (s *Suite) TestStatusIsOffered() {

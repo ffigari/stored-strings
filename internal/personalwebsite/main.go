@@ -46,15 +46,6 @@ func NewMux(
 		}
 	}
 
-	rootPath, err := oos.GetRootPath()
-	if err != nil {
-		return nil, fmt.Errorf("getting root path: %w", err)
-	}
-
-	r.PathPrefix("/").Handler(
-		http.StripPrefix("/i", http.FileServer(http.Dir(rootPath+"/i"))),
-	)
-
 	for _, path := range []string{
 		"/favicon.ico",
 		"/status",
@@ -86,6 +77,15 @@ func NewMux(
 	}
 
 	auth.AttachTo(r, password, dbPool, authenticator)
+
+	rootPath, err := oos.GetRootPath()
+	if err != nil {
+		return nil, fmt.Errorf("getting root path: %w", err)
+	}
+
+	r.PathPrefix("/").Handler(
+		http.StripPrefix("/i", http.FileServer(http.Dir(rootPath+"/i"))),
+	)
 
 	rr.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
