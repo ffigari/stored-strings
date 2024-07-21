@@ -2,6 +2,7 @@ package personalwebsite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -37,6 +38,22 @@ func (s *Suite) TestHome() {
 		res, err := http.Get(s.server.URL + "/lalala")
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusNotFound, res.StatusCode)
+	})
+
+	s.Run("serves individual media files", func() {
+		res, err := http.Get(s.server.URL + "/i/panoramica-de-casa.jpg")
+		s.Require().NoError(err)
+		s.Require().Equal(http.StatusOK, res.StatusCode)
+	})
+
+	s.Run("lists all media files", func() {
+		fmt.Println(s.server.URL)
+		res, err := http.Get(s.server.URL + "/i/")
+		s.Require().NoError(err)
+		s.Require().Equal(http.StatusOK, res.StatusCode)
+
+		body := s.GetBody(res)
+		s.Require().Contains(body, "panoramica-de-casa.jpg")
 	})
 }
 

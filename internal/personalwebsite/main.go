@@ -13,6 +13,7 @@ import (
 	"github.com/ffigari/stored-strings/internal/auth"
 	"github.com/ffigari/stored-strings/internal/calendar"
 	"github.com/ffigari/stored-strings/internal/dbpool"
+	"github.com/ffigari/stored-strings/internal/oos"
 	"github.com/ffigari/stored-strings/internal/ui"
 )
 
@@ -45,9 +46,13 @@ func NewMux(
 		}
 	}
 
-	r.Handle(
-		"/",
-		http.StripPrefix("/i/", http.FileServer(http.Dir("i"))),
+	rootPath, err := oos.GetRootPath()
+	if err != nil {
+		return nil, fmt.Errorf("getting root path: %w", err)
+	}
+
+	r.PathPrefix("/").Handler(
+		http.StripPrefix("/i", http.FileServer(http.Dir(rootPath+"/i"))),
 	)
 
 	for _, path := range []string{

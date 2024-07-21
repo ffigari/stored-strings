@@ -7,19 +7,22 @@ import (
 	"strings"
 )
 
-func ReadFileAtRoot(path string) ([]byte, error) {
-	// to allow using this pkg in non-root directories (eg tests for the
-	// postgres server connection string)
+func GetRootPath() (string, error) {
 	rootAbsolutePath, err := exec.
 		Command("git", "rev-parse", "--show-toplevel").
 		Output()
 	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(rootAbsolutePath)), nil
+}
+
+func ReadFileAtRoot(path string) ([]byte, error) {
+	rootPath, err := GetRootPath()
+	if err != nil {
 		return nil, err
 	}
 
-	return os.ReadFile(fmt.Sprintf(
-		"%s/%s",
-		strings.TrimSpace(string(rootAbsolutePath)),
-		path,
-	))
+	return os.ReadFile(fmt.Sprintf("%s/%s", rootPath, path))
 }
