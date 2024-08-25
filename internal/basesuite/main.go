@@ -28,6 +28,13 @@ func (s *BaseSuite) GetBody(res *http.Response) string {
 	return consecutiveSpacesRegexp.ReplaceAllString(string(body), " ")
 }
 
+func (s *BaseSuite) SendReq(req *http.Request) *http.Response {
+	res, err := (&http.Client{}).Do(req)
+	s.Require().NoError(err)
+
+	return res
+}
+
 func (s *BaseSuite) GetCookieValue(res *http.Response, name string) string {
 	for _, cookie := range res.Cookies() {
 		if cookie.Name != name {

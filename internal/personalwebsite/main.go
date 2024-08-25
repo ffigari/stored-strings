@@ -13,6 +13,7 @@ import (
 	"github.com/ffigari/stored-strings/internal/auth"
 	"github.com/ffigari/stored-strings/internal/calendar"
 	"github.com/ffigari/stored-strings/internal/dbpool"
+	"github.com/ffigari/stored-strings/internal/interactions"
 	"github.com/ffigari/stored-strings/internal/oos"
 	"github.com/ffigari/stored-strings/internal/ui"
 )
@@ -24,7 +25,6 @@ func NewMux(
 ) (*mux.Router, error) {
 	rr := mux.NewRouter()
 	r := rr.PathPrefix("/i").Subrouter()
-
 
 	// TODO: This db pool should be closed at graceful shutdown
 	dbPool, err := dbpool.NewFromConfig(ctx, dbName)
@@ -72,11 +72,110 @@ func NewMux(
 		})
 	}
 
+	r.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
+		ui.HTMLHeader(w, `
+			<style>
+			#canvas-container {
+				width: 100%;
+			}
+			#my-canvas {
+				border: 2px solid black;
+				border-radius: 10px;
+			}
+			</style>
+			<div id="canvas-container">
+				<canvas id="my-canvas" ></canvas>
+			</div>
+			<script>
+			const canvas = document.getElementById('my-canvas');
+			const ctx = canvas.getContext('2d')
+
+			function resizeCanvas() {
+				const canvas = document.getElementById('my-canvas');
+				const dpr = window.devicePixelRatio || 1;
+				const padding = 10; // Optional: adjust canvas padding
+				const rect = canvas.parentElement.getBoundingClientRect();
+
+				h = window.innerHeight - 2 * rect.top
+
+				// Set canvas display size
+				canvas.style.width = `+"`"+`${rect.width}px`+"`"+`;
+				canvas.style.height = `+"`"+`${h}px`+"`"+`;
+
+				// Set canvas buffer size
+				canvas.width = rect.width * dpr;
+				canvas.height = h * dpr;
+			}
+			resizeCanvas();
+			window.addEventListener('resize', resizeCanvas);
+
+			let cs = []
+
+			Promise.resolve().then(async () => {
+				try {
+					const res = await fetch("/interactions/clicks", {
+						method: "GET",
+					})
+					if (res.ok) {
+						const l = await res.json()
+						cs.push(...l)
+					}
+				} catch (e) {
+					console.log("fail get", e)
+				}
+			})
+
+			canvas.addEventListener('mousedown', async (e) => {
+				const r = canvas.getBoundingClientRect();
+
+				const c = {
+					x: e.clientX - r.left,
+					y: e.clientY - r.top
+				}
+
+				cs.push(c)
+
+				try {
+					const res = await fetch("/interactions/clicks", {
+						method: "POST",
+						body: JSON.stringify(c),
+					})
+				} catch (e) {
+					console.log("error", e)
+				}
+			})
+
+			animate = (t) => {
+				const { width: w, height: h } = canvas
+
+				ctx.clearRect(0, 0, w, h)
+
+				cs.forEach((c) => {
+					ctx.beginPath();
+					ctx.arc(
+						c.x, c.y,
+						50 * ((Math.sin(t / 1000) + 1) / 2),
+						0, 2 * Math.PI, false,
+					);
+					ctx.stroke();
+				})
+
+				requestAnimationFrame(animate)
+			}
+
+			animate()
+
+			</script>
+		`)
+	})
+
 	if err := calendar.AttachTo(r, "/i", dbPool, authenticator); err != nil {
 		return nil, err
 	}
 
 	auth.AttachTo(r, password, dbPool, authenticator)
+
+	interactions.AttachTo(rr, dbPool)
 
 	rootPath, err := oos.GetRootPath()
 	if err != nil {
