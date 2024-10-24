@@ -2,6 +2,7 @@ package basesuite
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/ffigari/stored-strings/internal/auth"
 	"github.com/ffigari/stored-strings/internal/dbpool"
+	"github.com/ffigari/stored-strings/internal/oos"
 	"github.com/ffigari/stored-strings/internal/postgresql"
 )
 
@@ -59,7 +61,20 @@ func (s *BaseSuite) SetupDB(ctx context.Context, testDBName string) *pgxpool.Poo
 	s.Require().NoError(err)
 	defer conn.Release()
 
-	s.Require().NoError(postgresql.RunMigrations(ctx, conn))
+	files, err := oos.ReadFiles("/migrations")
+	if errors.Is(err, oos.ErrNotADir) {
+		s.Require().Empty("pkg does not support db migrations")
+	}
+	s.Require().NoError(err)
+
+	if len(files) != 1 {
+		s.Require().Empty("multiple files migrations are not yet implemented")
+	}
+
+	migration := files[0]
+
+	_, err = conn.Exec(ctx, string(migration.Content()))
+	s.Require().NoError(err)
 
 	return dbPool
 }

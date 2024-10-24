@@ -16,4 +16,11 @@ CREATE TABLE IF NOT EXISTS clicks (
     y  int not null
 );
 
+CREATE TABLE IF NOT EXISTS generic_ars_expenses (
+    id          UUID PRIMARY KEY DEFAULT UUID_GENERATE_V4(),
+    description TEXT NOT NULL,
+    ars_cents   BIGINT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 COMMIT;

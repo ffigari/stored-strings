@@ -32,6 +32,23 @@ func NewMux(
 		return nil, err
 	}
 
+	r.HandleFunc("/anotador", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: leer todos los archivos del directorio logbook
+		// TODO: Parsear fecha y titulo
+		// TODO: Imprimir fecha, titulo y contenido
+		ui.HTMLHeader(w, `
+			<h1>Anotador</h1>
+
+			<ul>
+				<li>
+					<h2>
+						Fecha coso
+					</h2>
+				</li>
+			</ul>
+		`)
+	})
+
 	if _, filename, _, ok := runtime.Caller(0); !ok {
 		return nil, fmt.Errorf("no caller information")
 	} else {
@@ -169,6 +186,57 @@ func NewMux(
 		`)
 	})
 
+	for _, p := range []string{
+		"gramáticas-yoguis",
+		"gramaticas-yoguis",
+	} {
+		r.HandleFunc(
+			fmt.Sprintf("/%s", p),
+			func(w http.ResponseWriter, r *http.Request) {
+				ui.HTMLHeader(w, `
+					<h1>Gramáticas yoguis</h1>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        pre {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+
+    <pre>
+<code>
+expression ::= term | expression "+" term | expression "-" term
+term       ::= factor | term "*" factor | term "/" factor
+factor     ::= "(" expression ")" | number
+number     ::= digit | digit number
+digit      ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+</code>
+    </pre>
+					asistirse de gramáticas formales
+					a las cuales les tenemos fe
+
+					construir estructuras
+
+					inconscientemente torpe
+					conscientemente torpe
+					conscienetemente habil
+					inconscientemente habil
+				<h2>
+					
+				</h2>
+				<p>
+					
+				</p>
+				`)
+		})
+	}
+
 	if err := calendar.AttachTo(r, "/i", dbPool, authenticator); err != nil {
 		return nil, err
 	}
@@ -176,6 +244,8 @@ func NewMux(
 	auth.AttachTo(r, password, dbPool, authenticator)
 
 	interactions.AttachTo(rr, dbPool)
+
+	//finances.AttachTo(r, dbPool, authenticator)
 
 	rootPath, err := oos.GetRootPath()
 	if err != nil {
