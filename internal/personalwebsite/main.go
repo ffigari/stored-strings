@@ -192,6 +192,7 @@ func NewMux(
 	} {
 		r.HandleFunc(
 			fmt.Sprintf("/%s", p),
+			// TODO: Mover el style al header
 			func(w http.ResponseWriter, r *http.Request) {
 				ui.HTMLHeader(w, `
 					<h1>Gramáticas yoguis</h1>
@@ -209,6 +210,14 @@ func NewMux(
         }
     </style>
 
+				<i>TODO: Agregar abstract</i>
+
+				<h2>
+					Preliminar: gramáticas BFN
+				</h2>
+
+				<p>
+
     <pre>
 <code>
 expression ::= term | expression "+" term | expression "-" term
@@ -218,20 +227,49 @@ number     ::= digit | digit number
 digit      ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 </code>
     </pre>
+
+				</p>
+
+				<h2>
+					Esperanza activa
+				</h2>
+
+				<h2>
+					Comunicación no violenta
+				</h2>
+
+				<h2>
+					Reconociendo la estructura existente
+				</h2>
+				<p>
+					El objetivo de modelar estas dos propuestas es mostrar que
+					se las puede modelar con estructuras formales.
+					No es por quitarle valor a los casos puntuales
+					sino por ver que permite llegar al hecho de que en nuestro
+					discurso podemos ver y construir estructuras.
+				</p>
+
+				<p>
+					En ver las estructuras podemos ajustarlas para mejor.
+					En modelar las estrucutras podemos verlas y ajustarlas para
+					mejor.
+					Entiéndase modelar como simplemente el hecho de describirlo
+					precisamente con palabras.
+
+					Ej siempre tenemos el mismo patrón de discusion con un
+					compañero de laburo.
+					Buen, lo identifico y estudio como lograr que ante el mismo
+					encuentro se alcance un destino distinto más sano para
+					ambos.
+
 					asistirse de gramáticas formales
 					a las cuales les tenemos fe
-
 					construir estructuras
 
 					inconscientemente torpe
 					conscientemente torpe
 					conscienetemente habil
 					inconscientemente habil
-				<h2>
-					
-				</h2>
-				<p>
-					
 				</p>
 				`)
 		})
