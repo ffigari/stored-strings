@@ -49,17 +49,25 @@ func NewMux(
 		`)
 	})
 
-	if _, filename, _, ok := runtime.Caller(0); !ok {
-		return nil, fmt.Errorf("no caller information")
-	} else {
-		if homePageBytes, err := os.ReadFile(
-			path.Dir(filename) + "/home.html",
-		); err != nil {
-			return nil, err
+	for _, e := range []struct{
+		readPath string
+		showPath string
+	} {
+		{"/home.html", ""},
+		{"/estelas.html", "/estelas"},
+	} {
+		if _, filename, _, ok := runtime.Caller(0); !ok {
+			return nil, fmt.Errorf("no caller information")
 		} else {
-			r.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
-				ui.HTMLHeader(w, string(homePageBytes))
-			})
+			if homePageBytes, err := os.ReadFile(
+				path.Dir(filename) + e.readPath,
+			); err != nil {
+				return nil, err
+			} else {
+				r.HandleFunc(e.showPath, func(w http.ResponseWriter, r *http.Request) {
+					ui.HTMLHeader(w, string(homePageBytes))
+				})
+			}
 		}
 	}
 
