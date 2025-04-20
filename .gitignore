@@ -1,3 +1,5 @@
 *.swp
 config.json
 binwebapi
+editor/venv
+head-first-design-patterns

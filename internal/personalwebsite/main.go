@@ -16,6 +16,8 @@ import (
 	"github.com/ffigari/stored-strings/internal/interactions"
 	"github.com/ffigari/stored-strings/internal/oos"
 	"github.com/ffigari/stored-strings/internal/ui"
+
+	"github.com/ffigari/stored-strings/editor"
 )
 
 // TODO: Borrar logs. Tratar el log como algo que puede crecer y ser un problema
@@ -96,6 +98,80 @@ func NewMux(
 			`}))
 		})
 	}
+
+	r.HandleFunc("/editor", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			ui.HTMLHeader(w, `
+				<h1>Editor</h1>
+					<form id="uploadForm" method="POST" enctype="multipart/form-data">
+						<input type="file" id="directoryInput" name="files" webkitdirectory directory multiple>
+						<button type="submit">Upload</button>
+					</form>
+			`)
+			return
+		case http.MethodPost:
+			// Parse multipart form with a max memory of 32MB
+			err := r.ParseMultipartForm(32 << 20) // 32 MB
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			formdata := r.MultipartForm
+			files := formdata.File["files"]
+
+			response := "submitted\n"
+
+			smallImages := []editor.SmallImage{}
+
+			for _, fileHeader := range files {
+				// Open the uploaded file
+				src, err := fileHeader.Open()
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				defer src.Close()
+
+				fmt.Println("filename:", fileHeader.Filename)
+
+				file, err := editor.NewFile(src)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				
+				image, err := editor.NewImage(file)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				smallImage, err := editor.NewSmallImage(*image)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				smallImages = append(smallImages, *smallImage)
+			}
+
+			// TODO: This response here should return something like [{
+			//		"former_image_id": <uuid of original former image>
+			//		"latter_image_id": <uuid of original latter image>
+			//		"matching_features": list of matching features between
+			//		former and latter images, with reference to former_image
+			//		point of origin
+			//	}]
+			editor.FindMatchingFeatures(smallImages)
+
+			ui.HTMLHeader(w, response)
+			return
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 
 	r.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		ui.HTMLHeader(w, `
